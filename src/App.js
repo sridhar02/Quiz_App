@@ -19,6 +19,10 @@ const useAnswersStyles = makeStyles({
   },
   buttons: {
     marginBottom: "30px",
+    "&:active": {
+      background: "black",
+      color: "white",
+    },
   },
 });
 function Answers({ answers, checkAnswer }) {
@@ -43,7 +47,8 @@ function Answers({ answers, checkAnswer }) {
 const useAppStyles = makeStyles({
   container: {
     border: "3px solid grey",
-    padding: "20px",
+    padding: "8px",
+    paddingTop: 0,
   },
   heading: {
     fontSize: "35px",
@@ -53,13 +58,24 @@ const useAppStyles = makeStyles({
   subHeading: {
     fontSize: "15px",
   },
+  result: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "30px",
+    marginBottom: "20px",
+  },
+  score: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "8px",
+  },
 });
 
 const BorderLinearProgress = withStyles({
   root: {
     height: 15,
     backgroundColor: "#fff",
-    border: "1px solid black",
   },
   bar: {
     borderRadius: 20,
@@ -70,7 +86,7 @@ const BorderLinearProgress = withStyles({
 function App() {
   const classes = useAppStyles();
 
-  const [questionNumber, setQuestionNumber] = useState(0);
+  const [questionNumber, setQuestionNumber] = useState(1);
   const [question, setQuestion] = useState(questions[questionNumber].question);
   const [answers, setAnswers] = useState([
     ...questions[questionNumber].incorrect_answers,
@@ -78,9 +94,11 @@ function App() {
   ]);
   const [category, setCategory] = useState(questions[questionNumber].category);
   const [rating, setRating] = useState(questions[questionNumber].difficulty);
+  const [showResult, setShowResult] = useState(false);
 
-  const [correct, setCorrect] = useState(0);
+  const [correct, setCorrect] = useState(0  );
   const [isAnswered, setIsAswered] = useState(false);
+  const [showButton, setShowButton] = useState(false);
 
   const setQuestions = () => {
     if (questionNumber + 1 === totalQuestions) {
@@ -95,16 +113,22 @@ function App() {
       setQuestionNumber(questionNumber + 1);
       setIsAswered(false);
       setRating(questions[questionNumber].difficulty);
+      setShowResult(false);
+      setShowButton(false);
     }
   };
 
   const checkAnswer = (answer) => {
     if (!isAnswered) {
       if (answers[3] === answer) {
-        setIsAswered(true);
         setCorrect(correct + 1);
+        setIsAswered(true);
+        setShowResult(true);
+        setShowButton(true);
       } else {
         setIsAswered(false);
+        setShowResult(true);
+        setShowButton(true);
       }
     }
   };
@@ -118,6 +142,20 @@ function App() {
     questionRating = <Rating name="pristine" value={2} max={3} />;
   }
 
+  const Show = (
+    <div className={classes.result}> {isAnswered ? "Correct!" : "Sorry!"}</div>
+  );
+
+  const min = (correct / questions.length) * 100;
+  let score;
+  if (questionNumber === 0) {
+    score = 0;
+  } else {
+    score = (correct / questionNumber) * 100;
+  }
+  const max =
+    ((questions.length - (questionNumber - correct)) / questions.length) * 100;
+  console.log(score, correct);
   return (
     <div className={classes.container}>
       <BorderLinearProgress
@@ -126,25 +164,23 @@ function App() {
         value={((questionNumber + 1) / questions.length) * 100}
       />
       <div className={classes.heading}>
-        Question {questionNumber + 1} of {totalQuestions}
+        Question {questionNumber} of {totalQuestions}
       </div>
       <span className={classes.subHeading}>{decodeURIComponent(category)}</span>
       <div>{questionRating}</div>
       <h4>{decodeURIComponent(question)}</h4>
       <Answers answers={answers} checkAnswer={checkAnswer} />
-      <Button variant="contained" onClick={setQuestions}>
-        Next Question
-      </Button>
-      {isAnswered && <div> Correct </div>}
-      <div>
-        <div>Lowest score :{(correct / questions.length) * 100} %</div>
-        <div>Score :{(correct / questionNumber) * 100}% </div>
-        <div>
-          Max Score :{" "}
-          {((questions.length - (questionNumber - correct)) /
-            questions.length) *
-            100}
+      {showResult && Show}
+      {showButton && (
+        <div className={classes.result}>
+          <Button variant="contained" onClick={setQuestions}>
+            Next Question
+          </Button>
         </div>
+      )}
+      <div className={classes.score}>
+        <div>Score :{score}% </div>
+        <div>Max Score : {max} % </div>
       </div>
       <BorderLinearProgress
         variant="determinate"
