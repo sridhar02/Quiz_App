@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button, makeStyles, withStyles } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Rating from "@material-ui/lab/Rating";
+import { Progress } from "reactstrap";
 
 const questions = require("./questions.json");
 
@@ -70,6 +71,15 @@ const useAppStyles = makeStyles({
     justifyContent: "space-between",
     padding: "8px",
   },
+  pogress1: {
+    backgroundColor: "#000000",
+  },
+  progress2: {
+    backgroundColor: "#717171",
+  },
+  progress3: {
+    backgroundColor: "#d2d2d2",
+  },
 });
 
 const BorderLinearProgress = withStyles({
@@ -96,7 +106,7 @@ function App() {
   const [rating, setRating] = useState(questions[questionNumber].difficulty);
   const [showResult, setShowResult] = useState(false);
 
-  const [correct, setCorrect] = useState(0  );
+  const [correct, setCorrect] = useState(0);
   const [isAnswered, setIsAswered] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
@@ -153,9 +163,8 @@ function App() {
   } else {
     score = (correct / questionNumber) * 100;
   }
-  const max =
-    ((questions.length - (questionNumber - correct)) / questions.length) * 100;
-  console.log(score, correct);
+  const max = "100";
+  console.log(questionNumber, correct);
   return (
     <div className={classes.container}>
       <BorderLinearProgress
@@ -182,11 +191,24 @@ function App() {
         <div>Score :{score}% </div>
         <div>Max Score : {max} % </div>
       </div>
-      <BorderLinearProgress
-        variant="determinate"
-        color="secondary"
-        value={30}
-      />
+
+      <Progress multi>
+        <Progress
+          bar
+          color="black"
+          value={10}
+          max={100}
+          className={classes.pogress1}
+        >
+          {min}
+        </Progress>
+        <Progress bar value={10} max={100} className={classes.progress2}>
+          {score}
+        </Progress>
+        <Progress bar value={10} max={100} className={classes.progress3}>
+          {max}
+        </Progress>
+      </Progress>
     </div>
   );
 }
