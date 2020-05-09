@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { Button, makeStyles, withStyles } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import Grid from "@material-ui/core/Grid";
 import Rating from "@material-ui/lab/Rating";
 
 const questions = require("./questions.json");
@@ -112,24 +111,13 @@ function App() {
 
   let questionRating;
   if (rating === "easy") {
-    questionRating = (
-      <div>
-        <Rating name="pristine" value={1} max={3} />;
-      </div>
-    );
+    questionRating = <Rating name="pristine" value={1} max={3} />;
   } else if (rating === "hard") {
-    questionRating = (
-      <div>
-        <Rating name="pristine" value={3} max={3} />;
-      </div>
-    );
+    questionRating = <Rating name="pristine" value={3} max={3} />;
   } else {
-    questionRating = (
-      <div>
-        <Rating name="pristine" value={2} max={3} />;
-      </div>
-    );
+    questionRating = <Rating name="pristine" value={2} max={3} />;
   }
+
   return (
     <div className={classes.container}>
       <BorderLinearProgress
@@ -141,7 +129,7 @@ function App() {
         Question {questionNumber + 1} of {totalQuestions}
       </div>
       <span className={classes.subHeading}>{decodeURIComponent(category)}</span>
-      {questionRating}
+      <div>{questionRating}</div>
       <h4>{decodeURIComponent(question)}</h4>
       <Answers answers={answers} checkAnswer={checkAnswer} />
       <Button variant="contained" onClick={setQuestions}>
