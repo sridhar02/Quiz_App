@@ -47,7 +47,7 @@ const useAppStyles = makeStyles({
     border: "3px solid grey",
     padding: "8px",
     paddingTop: 0,
-    width: "50%",
+    // width: "50%",
    minHeight:"90vh"
   },
   heading: {
