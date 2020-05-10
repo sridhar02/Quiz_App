@@ -194,7 +194,7 @@ function App() {
     ((correct + (questions.length - (correct + wrong))) / questions.length) *
     100;
 
-  console.log(correct, wrong, min, max, questionNumber);
+  console.log(min, score, max, correct, wrong);
 
   return (
     <div className={classes.container}>
@@ -228,14 +228,14 @@ function App() {
         ></div>
         <div
           style={{
-            width: `${score}%`,
+            width: `${score - min}%`,
             backgroundColor: "#717171",
             height: "20px",
           }}
         ></div>
         <div
           style={{
-            width: `${max}%`,
+            width: `${max - score}%`,
             backgroundColor: "#d2d2d2",
             height: "20px",
           }}
