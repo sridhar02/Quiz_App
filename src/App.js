@@ -17,7 +17,7 @@ const useAnswersStyles = makeStyles({
   },
   buttons: {
     marginBottom: "30px",
-    "&:active": {
+    "&:hover": {
       background: "black",
       color: "white",
     },
@@ -227,7 +227,11 @@ function App() {
           style={{ width: ` ${min}%`, backgroundColor: "#000", height: "20px" }}
         ></div>
         <div
-          style={{ width: `${score}%`, backgroundColor: "#717171", height: "20px" }}
+          style={{
+            width: `${score}%`,
+            backgroundColor: "#717171",
+            height: "20px",
+          }}
         ></div>
         <div
           style={{
