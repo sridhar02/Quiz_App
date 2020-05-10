@@ -44,11 +44,12 @@ function Answers({ answers, checkAnswer }) {
 
 const useAppStyles = makeStyles({
   container: {
-    border: "3px solid grey",
+    border: "2px solid grey",
     padding: "8px",
     paddingTop: 0,
     // width: "50%",
-   minHeight:"90vh"
+    margin: "8px",
+    minHeight: "85vh",
   },
   heading: {
     fontSize: "35px",
@@ -81,6 +82,8 @@ const useAppStyles = makeStyles({
   },
   progress: {
     display: "flex",
+    border: "1px solid black",
+    borderRadius: "8px ",
   },
 });
 
@@ -201,7 +204,7 @@ function App() {
         value={((questionNumber + 1) / questions.length) * 100}
       />
       <div className={classes.heading}>
-        Question {questionNumber+1} of {questions.length}
+        Question {questionNumber + 1} of {questions.length}
       </div>
       <span className={classes.subHeading}>{decodeURIComponent(category)}</span>
       <div>{questionRating}</div>
@@ -221,13 +224,17 @@ function App() {
       </div>
       <div className={classes.progress}>
         <div
-          style={{ width: min, backgroundColor: "#000", height: "20px" }}
+          style={{ width: ` ${min}%`, backgroundColor: "#000", height: "20px" }}
         ></div>
         <div
-          style={{ width: score, backgroundColor: "#717171", height: "20px" }}
+          style={{ width: `${score}%`, backgroundColor: "#717171", height: "20px" }}
         ></div>
         <div
-          style={{ width: max, backgroundColor: "#d2d2d2", height: "20px" }}
+          style={{
+            width: `${max}%`,
+            backgroundColor: "#d2d2d2",
+            height: "20px",
+          }}
         ></div>
       </div>
     </div>
