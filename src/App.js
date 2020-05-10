@@ -1,13 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Button, makeStyles, withStyles } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Rating from "@material-ui/lab/Rating";
-import { Progress } from "reactstrap";
 
 const questions = require("./questions.json");
-
-const totalQuestions = questions.length;
 
 const useAnswersStyles = makeStyles({
   answers: {
@@ -50,6 +47,8 @@ const useAppStyles = makeStyles({
     border: "3px solid grey",
     padding: "8px",
     paddingTop: 0,
+    width: "50%",
+   minHeight:"90vh"
   },
   heading: {
     fontSize: "35px",
@@ -80,6 +79,9 @@ const useAppStyles = makeStyles({
   progress3: {
     backgroundColor: "#d2d2d2",
   },
+  progress: {
+    display: "flex",
+  },
 });
 
 const BorderLinearProgress = withStyles({
@@ -96,7 +98,7 @@ const BorderLinearProgress = withStyles({
 function App() {
   const classes = useAppStyles();
 
-  const [questionNumber, setQuestionNumber] = useState(1);
+  const [questionNumber, setQuestionNumber] = useState(0);
   const [question, setQuestion] = useState(questions[questionNumber].question);
   const [answers, setAnswers] = useState([
     ...questions[questionNumber].incorrect_answers,
@@ -104,41 +106,63 @@ function App() {
   ]);
   const [category, setCategory] = useState(questions[questionNumber].category);
   const [rating, setRating] = useState(questions[questionNumber].difficulty);
+  const [type, setType] = useState(questions[questionNumber].type);
   const [showResult, setShowResult] = useState(false);
 
   const [correct, setCorrect] = useState(0);
+  const [wrong, setWrong] = useState(0);
   const [isAnswered, setIsAswered] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
   const setQuestions = () => {
-    if (questionNumber + 1 === totalQuestions) {
+    if (questionNumber + 1 === questions.length) {
       setQuestionNumber(0);
     } else {
-      setQuestion(questions[questionNumber].question);
-      setAnswers([
-        ...questions[questionNumber].incorrect_answers,
-        questions[questionNumber].correct_answer,
-      ]);
-      setCategory(questions[questionNumber].category);
+      let number = questionNumber + 1;
       setQuestionNumber(questionNumber + 1);
+      setQuestion(questions[number].question);
+      setAnswers([
+        ...questions[number].incorrect_answers,
+        questions[number].correct_answer,
+      ]);
+      setType(questions[number].type);
+      setCategory(questions[number].category);
+      setRating(questions[number].difficulty);
       setIsAswered(false);
-      setRating(questions[questionNumber].difficulty);
       setShowResult(false);
       setShowButton(false);
     }
   };
+  useEffect(() => {
+    // setQuestions();
+  }, []);
 
   const checkAnswer = (answer) => {
     if (!isAnswered) {
-      if (answers[3] === answer) {
-        setCorrect(correct + 1);
-        setIsAswered(true);
-        setShowResult(true);
-        setShowButton(true);
-      } else {
-        setIsAswered(false);
-        setShowResult(true);
-        setShowButton(true);
+      if (type === "multiple") {
+        if (answers[3] === answer) {
+          setCorrect(correct + 1);
+          setIsAswered(true);
+          setShowResult(true);
+          setShowButton(true);
+        } else {
+          setWrong(wrong + 1);
+          setShowButton(true);
+          setShowResult(true);
+          setIsAswered(false);
+        }
+      } else if (type === "boolean") {
+        if (answers[1] === answer) {
+          setCorrect(correct + 1);
+          setIsAswered(true);
+          setShowResult(true);
+          setShowButton(true);
+        } else {
+          setWrong(wrong + 1);
+          setShowButton(true);
+          setShowResult(true);
+          setIsAswered(false);
+        }
       }
     }
   };
@@ -161,10 +185,14 @@ function App() {
   if (questionNumber === 0) {
     score = 0;
   } else {
-    score = (correct / questionNumber) * 100;
+    score = (correct / (correct + wrong)) * 100;
   }
-  const max = "100";
-  console.log(questionNumber, correct);
+  const max =
+    ((correct + (questions.length - (correct + wrong))) / questions.length) *
+    100;
+
+  console.log(correct, wrong, min, max, questionNumber);
+
   return (
     <div className={classes.container}>
       <BorderLinearProgress
@@ -173,7 +201,7 @@ function App() {
         value={((questionNumber + 1) / questions.length) * 100}
       />
       <div className={classes.heading}>
-        Question {questionNumber} of {totalQuestions}
+        Question {questionNumber+1} of {questions.length}
       </div>
       <span className={classes.subHeading}>{decodeURIComponent(category)}</span>
       <div>{questionRating}</div>
@@ -182,7 +210,7 @@ function App() {
       {showResult && Show}
       {showButton && (
         <div className={classes.result}>
-          <Button variant="contained" onClick={setQuestions}>
+          <Button variant="contained" onClick={() => setQuestions()}>
             Next Question
           </Button>
         </div>
@@ -191,24 +219,17 @@ function App() {
         <div>Score :{score}% </div>
         <div>Max Score : {max} % </div>
       </div>
-
-      <Progress multi>
-        <Progress
-          bar
-          color="black"
-          value={10}
-          max={100}
-          className={classes.pogress1}
-        >
-          {min}
-        </Progress>
-        <Progress bar value={10} max={100} className={classes.progress2}>
-          {score}
-        </Progress>
-        <Progress bar value={10} max={100} className={classes.progress3}>
-          {max}
-        </Progress>
-      </Progress>
+      <div className={classes.progress}>
+        <div
+          style={{ width: min, backgroundColor: "#000", height: "20px" }}
+        ></div>
+        <div
+          style={{ width: score, backgroundColor: "#717171", height: "20px" }}
+        ></div>
+        <div
+          style={{ width: max, backgroundColor: "#d2d2d2", height: "20px" }}
+        ></div>
+      </div>
     </div>
   );
 }
